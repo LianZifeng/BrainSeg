@@ -96,7 +96,7 @@ Before starting training, we recommend that you preprocess the data. We suggest 
 After preprocessing, your data directory should be structured to match the BCLIP training format
 
 ## Step 2: Train BrainSeg
-Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link), [BrainSeg_parc](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link) and [BrainSeg_lesion](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link)
+Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1oHgnOyCLNxjO3tn2iKG54-cyIEsKkVNS/view?usp=drive_link), [BrainSeg_parc](https://drive.google.com/file/d/13Vl_3yaOgaWhUhdkS2IekR-sQnV4oCrA/view?usp=drive_link) and [BrainSeg_lesion](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link)
 ```bash
 python train.py  # Please change the path in the code to the path of your own data
 ```
