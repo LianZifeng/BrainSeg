@@ -1,6 +1,13 @@
 # BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling
 Official implementation code for BrainSeg. We proposes a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, PET scans, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: BrainSeg, B-Synth, and B-CLIP, with the first two leveraging the third.
 
+***
+## Model overview
+<div style="text-align: center">
+  <img src="figures/overview.pdf" width="100%" alt="BrainSeg Framework">
+</div>
+
+***
 
 # Citation
 If you find this work useful in your research, please cite:
