@@ -81,6 +81,11 @@ lesion/
 ├── subject03
 └── ……
 ```
+## Step 3: Train B-CLIP
+Now you can start training B-CLIP. You can choose to train from scratch or load our pre-trained model of B-CLIP for fine-tuning. You can download our pretrained B-CLIP model through the following link:
+```bash
+python /B-CLIP/RetrainBCLIP.py  # Please change the path in the code to the path of your own data
+```
 
 ***
 
