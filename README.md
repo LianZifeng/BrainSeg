@@ -1,5 +1,5 @@
 # BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling
-Official implementation code for BrainSeg. We proposes a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, PET scans, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: BrainSeg, B-Syn, and B-CLIP, with the first two leveraging the third.
+Official implementation code for BrainSeg. We proposes a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, CT, PET, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: B-Syn, B-CLIP, and BrainSeg.
 
 ***
 ## Model overview
@@ -10,7 +10,7 @@ Official implementation code for BrainSeg. We proposes a novel AI-based tool for
 ***
 
 ***
-# Get started with B-CLIP
+# Get started with B-Syn and B-CLIP
 ## Step 1: Set up the environment for BiomedCLIP
 Our B-CLIP fine-tunes BiomedCLIP text encoder based on LoRA, so you need to first configure the Biomedical environment: 
 
@@ -57,8 +57,8 @@ tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_p
 You can organize your file directory as follows to train B-CLIP on your own data
 ```bash
 prompt.xlsx                     # excel for text metadata
-parameter.xlsx                  # excel for image parameter, used for data synthetic
-lesion_parameter.xlsx           # excel for lesion parameter, used for lesion synthetic
+parameter.xlsx                  # excel for image parameter, used for data synthetic of B-Syn module
+lesion_parameter.xlsx           # excel for lesion parameter, used for lesion synthetic of B-Syn module
 data/
 ├── subject001/
 │   ├── brain.nii.gz            # brain image
@@ -84,7 +84,7 @@ lesion/
 ## Step 3: Train B-CLIP
 Now you can start training B-CLIP. You can choose to train from scratch or load our pre-trained model of B-CLIP for fine-tuning. You can download our pretrained B-CLIP model through the following link: [BCLIP](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link)
 ```bash
-python /BCLIP/RetrainBCLIP.py  # Please change the path in the code to the path of your own data
+python /BCLIP/train.py  # Please change the path in the code to the path of your own data
 ```
 
 ***
@@ -93,10 +93,10 @@ python /BCLIP/RetrainBCLIP.py  # Please change the path in the code to the path 
 # Get started with BrainSeg
 ## Step 1: Data prepocessing
 Before starting training, we recommend that you preprocess the data. We suggest you use the same preprocessing steps as us, including registering all images to the MNI space and performing skull stripping. Then crop the image to (224, 256, 224). 
-After preprocessing, your data directory should be structured to match the BCLIP training format
+After preprocessing, your data directory should be structured to match the B-CLIP training format
 
 ## Step 2: Train BrainSeg
-Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1oHgnOyCLNxjO3tn2iKG54-cyIEsKkVNS/view?usp=drive_link), [BrainSeg_parc](https://drive.google.com/file/d/13Vl_3yaOgaWhUhdkS2IekR-sQnV4oCrA/view?usp=drive_link) and [BrainSeg_lesion](https://drive.google.com/file/d/1qnw8pV1c6n0_kwUJx9iQXCJvDboFmxce/view?usp=drive_link)
+Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1oHgnOyCLNxjO3tn2iKG54-cyIEsKkVNS/view?usp=drive_link) for tissue segmentation, [BrainSeg_parc](https://drive.google.com/file/d/13Vl_3yaOgaWhUhdkS2IekR-sQnV4oCrA/view?usp=drive_link) for brain parcellation and [BrainSeg_lesion](https://drive.google.com/file/d/1qnw8pV1c6n0_kwUJx9iQXCJvDboFmxce/view?usp=drive_link) for lesion labeling
 ```bash
 python train.py  # Please change the path in the code to the path of your own data
 ```
