@@ -9,6 +9,31 @@ Official implementation code for BrainSeg. We proposes a novel AI-based tool for
 
 ***
 
+***
+# Get started with B-CLIP
+## Step 1: Set up the environment for BiomedCLIP
+Our B-CLIP fine-tunes BiomedCLIP text encoder based on LoRA, so you need to first configure the Biomedical environment: 
+
+**1. First clone the latest BiomedCLIP model (the commit version we used is 27005c2, and earlier versions may have compatibility issues)**
+```bash
+cd /your/path/to/BiomedCLIP
+git clone https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224
+```
+**2. And then clone the latest BiomedBERT-abstract**
+```bash
+cd /your/path/to/BiomedBERT-abstract
+git clone https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract
+```
+**3. Install the specific version of open_clip_torch**
+```bash
+pip install open_clip_torch==2.23.0 transformers==4.35.2 matplotlib
+```
+**4. To invoke your local path of Biomedical, you need to make a little modification to the source code of open-clip.**
+
+**Please follow: https://github.com/mlfoundations/open_clip/issues/772#issuecomment-1884355134**
+
+***
+
 # Citation
 If you find this work useful in your research, please cite:
 > **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding, Han Zhang, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. (Under Review)**
