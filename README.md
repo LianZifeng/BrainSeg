@@ -53,6 +53,7 @@ model, preprocess = create_model_from_pretrained('hf-hub:microsoft/BiomedCLIP-Pu
 tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224', 
                          cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
 ```
+## Step 2: Preparation your data to train B-CLIP
 
 ***
 
