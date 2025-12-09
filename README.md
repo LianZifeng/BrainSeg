@@ -54,6 +54,33 @@ tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_p
                          cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
 ```
 ## Step 2: Preparation your data to train B-CLIP
+You can organize your file directory as follows to train B-CLIP on your own data
+```bash
+prompt.xlsx                     # excel for text metadata
+parameter.xlsx                  # excel for image parameter, used for data synthetic
+lesion_parameter.xlsx           # excel for lesion parameter, used for lesion synthetic
+data/
+├── subject001/
+│   ├── brain.nii.gz            # brain image
+│   ├── tissue.nii.hz           # tissue map GT
+│   ├── dk-struct.nii.gz        # roi map GT
+│   ├── T2-brain.nii.gz         # T2 modality image, if have
+│   ├── CT-brain.nii.gz         # CT modality image, if have
+│   ├── ……                      # other modality image, if have
+├── subject002 
+├── subject003
+└── ……
+lesion/
+├── subject01/
+│   ├── brain.nii.gz            # brain image
+│   ├── lesion.nii.hz           # lesion map GT
+│   ├── Flair-brain.nii.gz      # T2-FLAIR modality image, if have
+│   ├── T2-brain.nii.gz         # T2 modality image, if have
+│   ├── ……                      # other modality image, if have
+├── subject02 
+├── subject03
+└── ……
+```
 
 ***
 
