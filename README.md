@@ -91,6 +91,14 @@ python /BCLIP/RetrainBCLIP.py  # Please change the path in the code to the path 
 
 ***
 # Get started with BrainSeg
+## Step 1: Data prepocessing
+Before starting training, we recommend that you preprocess the data. We suggest you use the same preprocessing steps as us, including registering all images to the MNI space and performing skull stripping. Then crop the image to (224, 256, 224). 
+After preprocessing, your data directory should be structured to match the BCLIP training format
+
+## Step 2: Train BrainSeg
+
+## Step 3: Inference using our pretrained model
+给出预训练模型权重路径，给出几个样本进行演示
 
 ***
 
