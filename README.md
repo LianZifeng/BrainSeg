@@ -96,8 +96,37 @@ Before starting training, we recommend that you preprocess the data. We suggest 
 After preprocessing, your data directory should be structured to match the BCLIP training format
 
 ## Step 2: Train BrainSeg
+Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link), [BrainSeg_parc](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link) and [BrainSeg_lesion](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link)
+```bash
+python train.py  # Please change the path in the code to the path of your own data
+```
 
 ## Step 3: Inference using our pretrained model
+We provide a set of example samples covering **diverse age groups, multiple modalities, and lesion cases** in [Sample](./Sample). You can run inference directly on these samples using our pre-trained model. You can also test on your own data, provided it is structured as follows:
+```bash
+Sample/
+├── sub001/
+│   ├── brain.nii.gz        
+│   ├── tissue.nii.hz        
+│   ├── dk-struct.nii.gz     
+│   ├── T2-brain.nii.gz      
+│   ├── CT-brain.nii.gz        
+│   ├── ……                     
+├── sub002/
+│   ├── brain.nii.gz        
+│   ├── tissue.nii.hz        
+│   ├── dk-struct.nii.gz     
+│   ├── T2-brain.nii.gz      
+│   ├── CT-brain.nii.gz        
+│   ├── ……    
+├── sub003
+└── ……
+```
+### 1. Tissue segmentation
+
+### 2. Brain Parcellation
+
+### 3. Lesion labeling
 给出预训练模型权重路径，给出几个样本进行演示
 
 ***
