@@ -122,11 +122,22 @@ Sample/
 └── ……
 ```
 ### 1. Tissue segmentation
+You can run tissue segmentation inference using the following command:
+```bash
+python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode tissue --flag single --modality CT-brain.nii.gz
+```
 
 ### 2. Brain Parcellation
+You can run brain parcellation inference using the following command:
+```bash
+python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 7 --out_channels 107 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode dk
+```
 
 ### 3. Lesion labeling
-给出预训练模型权重路径，给出几个样本进行演示
+You can run lesion labeling inference using the following command:
+```bash
+python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode lesion
+```
 
 ***
 
