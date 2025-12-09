@@ -60,7 +60,7 @@ def sobel_3d(image):
     return edge
 
 
-class FullDataset(Dataset):
+class SegDataset(Dataset):
     def __init__(self, texts_path, images_path, mode_prob=0.5):
         self.data = pd.read_excel(texts_path)
         self.images_path = images_path
@@ -108,7 +108,7 @@ class FullDataset(Dataset):
         if os.path.exists(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")):
             modalities["T2w MRI"] = nib.load(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")).get_fdata()
             modalities["T2w MRI"] = process_image(modalities["T2w MRI"])
-        # 处理第三个通道，包含CT、Flair、DWI
+        # processing the third channel, including CT, FLAIR, and DWI
         if os.path.exists(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")):
             modalities["three"] = nib.load(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")).get_fdata()
             modalities["three"] = process_image(modalities["three"])
@@ -211,8 +211,8 @@ class FullDataset(Dataset):
         return item
 
 
-# Used for multimodal inference
-class BSDataset(Dataset):
+# Used for multimodal tissue inference
+class MultiDataset(Dataset):
     def __init__(self, texts_path, images_path, index='Sheet1'):
         self.data = pd.read_excel(texts_path, sheet_name=index)
         self.images_path = images_path
@@ -228,6 +228,246 @@ class BSDataset(Dataset):
         affine = nib.load(os.path.join(self.images_path, patient_id, "dk-struct.nii.gz")).affine
         dk_struct = nib.load(os.path.join(self.images_path, patient_id, "dk-struct.nii.gz")).get_fdata()
         dk_struct = process_label(dk_struct)
+        tissue = nib.load(os.path.join(self.images_path, patient_id, "tissue.nii.gz")).get_fdata()
+        tissue = process_label(tissue)
+        T1 = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "brain.nii.gz")):
+            T1 = nib.load(os.path.join(self.images_path, patient_id, "brain.nii.gz")).get_fdata()
+            T1 = process_image(T1)
+        T2 = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")):
+            T2 = nib.load(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")).get_fdata()
+            T2 = process_image(T2)
+        three = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")):
+            three = nib.load(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "Flair-brain.nii.gz")):
+            three = nib.load(os.path.join(self.images_path, patient_id, "Flair-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "DWI-brain.nii.gz")):
+            three = nib.load(os.path.join(self.images_path, patient_id, "DWI-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        PET = None
+        pet_type = get_pet(caption.split(';')[2])
+        if pet_type is not None:
+            PET = nib.load(os.path.join(self.images_path, patient_id, pet_type + "-brain.nii.gz")).get_fdata()
+            PET = process_image(PET)
+        Random = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "US-brain.nii.gz")):
+            Random = nib.load(os.path.join(self.images_path, patient_id, "US-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "PD-brain.nii.gz")):
+            Random = nib.load(os.path.join(self.images_path, patient_id, "PD-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "SWI-brain.nii.gz")):
+            Random = nib.load(os.path.join(self.images_path, patient_id, "SWI-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "T2s-brain.nii.gz")):
+            Random = nib.load(os.path.join(self.images_path, patient_id, "T2s-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        # calculate edge map
+        if T1 is not None:
+            edge = sobel_3d(T1)
+        elif T2 is not None:
+            edge = sobel_3d(T2)
+        elif three is not None:
+            edge = sobel_3d(three)
+        elif PET is not None:
+            edge = sobel_3d(PET)
+        elif Random is not None:
+            edge = sobel_3d(Random)
+        edge = process_image(edge.squeeze(0).numpy())
+        # concat channels
+        channels = []
+        if T1 is not None:
+            channels.append(T1)
+        else:
+            noise = torch.randn(tissue.shape)
+            channels.append(noise)
+        if T2 is not None:
+            channels.append(T2)
+        else:
+            noise = torch.randn(tissue.shape)
+            channels.append(noise)
+        if three is not None:
+            channels.append(three)
+        else:
+            noise = torch.randn(tissue.shape)
+            channels.append(noise)
+        if PET is not None:
+            channels.append(PET)
+        else:
+            noise = torch.randn(tissue.shape)
+            channels.append(noise)
+        if Random is not None:
+            channels.append(Random)
+        else:
+            noise = torch.randn(tissue.shape)
+            channels.append(noise)
+        channels.append(edge)
+
+        image_dict = {
+            "T1": channels[0],
+            "T2": channels[1],
+            "three": channels[2],
+            "PET": channels[3],
+            "Random": channels[4],
+            "edge": channels[5],
+            "tissue": tissue,
+            "dk_struct": dk_struct
+        }
+
+        # Combine images into a tensor
+        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0)
+
+        text = self.tokenizer(caption)[0]
+        item = {
+            'images': images,
+            'tissue': image_dict['tissue'],
+            'dk-struct': image_dict['dk_struct'],
+            'text': text,
+            'affine': affine,
+            'ID': patient_id,
+        }
+
+        return item
+
+
+# Used for unimodal tissue inference
+class SingleDataset(Dataset):
+    def __init__(self, texts_path, images_path, modality):
+        self.data = pd.read_excel(texts_path)
+        self.data.set_index('patient_id', inplace=True)
+        self.images_path = images_path
+        self.modality = modality
+        if modality == 'PET':
+            pet_prefixes = ["AV45", "FDG", "TAU", "Dynamic", "PIB", "CTAC", "Flumetamol", "NAV4694", "SUV", "SUM"]
+            self.pet_prefixes = pet_prefixes
+            self.images_list = [folder for folder in os.listdir(images_path) if any(os.path.exists(os.path.join(images_path, folder, f"{prefix}-brain.nii.gz")) for prefix in pet_prefixes) and folder in self.data.index]
+        else:
+            self.images_list = [folder for folder in os.listdir(images_path) if os.path.exists(os.path.join(images_path, folder, modality)) and folder in self.data.index]
+        self.tokenizer, _ = load_text_encoder()
+
+    def __len__(self):
+        return len(self.images_list)
+
+    def __getitem__(self, idx):
+        patient_id = self.images_list[idx]
+        caption = self.data.loc[patient_id, 'caption']
+        patient_path = os.path.join(self.images_path, patient_id)
+        affine = nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).affine
+        dk_struct = nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).get_fdata()
+        dk_struct = process_label(dk_struct)
+        tissue = nib.load(os.path.join(patient_path, "tissue.nii.gz")).get_fdata()
+        tissue = process_label(tissue)
+        if self.modality == 'PET':
+            Modality = nib.load(next(os.path.join(patient_path, f"{prefix}-brain.nii.gz") for prefix in self.pet_prefixes if os.path.exists(os.path.join(patient_path, f"{prefix}-brain.nii.gz")))).get_fdata()
+        else:
+            Modality = nib.load(os.path.join(patient_path, self.modality)).get_fdata()
+        Modality = process_image(Modality)
+        edge = sobel_3d(Modality)
+        edge = process_image(edge.squeeze(0).numpy())
+
+        noise1 = torch.randn(dk_struct.shape)
+        noise2 = torch.randn(dk_struct.shape)
+        noise3 = torch.randn(dk_struct.shape)
+        noise4 = torch.randn(dk_struct.shape)
+
+        channels = []
+        if self.modality == 'brain.nii.gz':
+            channels.append(Modality)
+            channels.append(noise1)
+            channels.append(noise2)
+            channels.append(noise3)
+            channels.append(noise4)
+        elif self.modality == 'T2-brain.nii.gz':
+            channels.append(noise1)
+            channels.append(Modality)
+            channels.append(noise2)
+            channels.append(noise3)
+            channels.append(noise4)
+        elif self.modality in ['CT-brain.nii.gz', 'DWI-brain.nii.gz', 'Flair-brain.nii.gz']:
+            channels.append(noise1)
+            channels.append(noise2)
+            channels.append(Modality)
+            channels.append(noise3)
+            channels.append(noise4)
+        elif self.modality == 'PET':
+            channels.append(noise1)
+            channels.append(noise2)
+            channels.append(noise3)
+            channels.append(Modality)
+            channels.append(noise4)
+        elif self.modality in ['US-brain.nii.gz', 'PD-brain.nii.gz', 'SWI-brain.nii.gz', 'T2s-brain.nii.gz']:
+            channels.append(noise1)
+            channels.append(noise2)
+            channels.append(noise3)
+            channels.append(noise4)
+            channels.append(Modality)
+        channels.append(edge)
+
+        image_dict = {
+            "T1": channels[0],
+            "T2": channels[1],
+            "three": channels[2],
+            "PET": channels[3],
+            "Random": channels[4],
+            "edge": channels[5],
+            "tissue": tissue,
+            "dk_struct": dk_struct
+        }
+
+        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0)
+
+        pattern = r'Modality: \[(.*?)\]'
+        match = re.search(pattern, caption)
+        modality_list = match.group(1).split(', ')
+        if self.modality == 'brain.nii.gz':
+            modality_list = ['T1w MRI' if i == 0 else 'None' for i in range(len(modality_list))]
+        elif self.modality == 'T2-brain.nii.gz':
+            modality_list = ['T2w MRI' if i == 1 else 'None' for i in range(len(modality_list))]
+        elif self.modality in ['CT-brain.nii.gz', 'DWI-brain.nii.gz', 'Flair-brain.nii.gz']:
+            modality_list = [f'{self.modality.split("-")[0]}' if i == 2 else 'None' for i in range(len(modality_list))]
+        elif self.modality == 'PET':
+            prefix = os.path.basename(next(os.path.join(patient_path, f"{prefix}-brain.nii.gz") for prefix in self.pet_prefixes if os.path.exists(os.path.join(patient_path, f"{prefix}-brain.nii.gz")))).split('-', 1)[0]
+            modality_list = [f'{prefix.split("-")[0]} PET' if i == 3 else 'None' for i in range(len(modality_list))]
+        elif self.modality in ['US-brain.nii.gz', 'PD-brain.nii.gz', 'SWI-brain.nii.gz', 'T2s-brain.nii.gz']:
+            modality_list = ['Random' if i == 4 else 'None' for i in range(len(modality_list))]
+        new_modality = f"Modality: [{', '.join(modality_list)}]"
+        caption = re.sub(pattern, new_modality, caption)
+        text = self.tokenizer(caption)[0]
+
+        item = {
+            'images': images,
+            'tissue': image_dict['tissue'],
+            'dk-struct': image_dict['dk_struct'],
+            'text': text,
+            'affine': affine,
+            'ID': patient_id
+        }
+
+        return item
+
+
+# Used for mutilmodal dk inference
+class DKDataset(Dataset):
+    def __init__(self, texts_path, images_path, index='Sheet1'):
+        self.data = pd.read_excel(texts_path, sheet_name=index)
+        self.images_path = images_path
+        self.tokenizer, _ = load_text_encoder()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        caption = self.data.iloc[idx]['caption']
+        patient_id = self.data.iloc[idx]['patient_id']
+        patient_id = str(patient_id)
+        affine = nib.load(os.path.join(self.images_path, patient_id, "dk-struct.nii.gz")).affine
+        dk_struct = nib.load(os.path.join(self.images_path, patient_id, "dk-struct.nii.gz")).get_fdata()
+        dk_struct = process_label(dk_struct)
+        # loading the tissue segmentation prediction results from the first stage
         tissue = nib.load(os.path.join(self.images_path, patient_id, "pred_tissue.nii.gz")).get_fdata()
         tissue = process_label(tissue)
         T1 = None
@@ -307,223 +547,6 @@ class BSDataset(Dataset):
             channels.append(noise)
         channels.append(edge)
 
-        # Combine images into a tensor
-        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0)
-
-        text = self.tokenizer(caption)[0]
-        item = {
-            'images': images,
-            'tissue': image_dict['tissue'],
-            'dk-struct': image_dict['dk_struct'],
-            'text': text,
-            'affine': affine,
-            'ID': patient_id,
-        }
-
-        return item
-
-
-# Used for unimodal inference
-class SingleDataset(Dataset):
-    def __init__(self, texts_path, images_path, modality):
-        self.data = pd.read_excel(texts_path)
-        self.data.set_index('patient_id', inplace=True)
-        self.images_path = images_path
-        self.modality = modality
-        if modality == 'PET':
-            pet_prefixes = ["AV45", "FDG", "TAU", "Dynamic", "PIB", "CTAC", "Flumetamol", "NAV4694", "SUV", "SUM"]
-            self.pet_prefixes = pet_prefixes
-            self.images_list = [folder for folder in os.listdir(images_path) if any(os.path.exists(os.path.join(images_path, folder, f"{prefix}-brain.nii.gz")) for prefix in pet_prefixes) and folder in self.data.index]
-        else:
-            self.images_list = [folder for folder in os.listdir(images_path) if os.path.exists(os.path.join(images_path, folder, modality)) and folder in self.data.index]
-        self.tokenizer, _ = load_text_encoder()
-
-    def __len__(self):
-        return len(self.images_list)
-
-    def __getitem__(self, idx):
-        patient_id = self.images_list[idx]
-        caption = self.data.loc[patient_id, 'caption']
-        patient_path = os.path.join(self.images_path, patient_id)
-        affine = nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).affine
-        dk_struct = nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).get_fdata()
-        dk_struct = process_label(dk_struct)
-        tissue = nib.load(os.path.join(patient_path, "tissue.nii.gz")).get_fdata()
-        tissue = process_label(tissue)
-        if self.modality == 'PET':
-            Modality = nib.load(next(os.path.join(patient_path, f"{prefix}-brain.nii.gz") for prefix in self.pet_prefixes if os.path.exists(os.path.join(patient_path, f"{prefix}-brain.nii.gz")))).get_fdata()
-        else:
-            Modality = nib.load(os.path.join(patient_path, self.modality)).get_fdata()
-        Modality = process_image(Modality)
-        edge = sobel_3d(Modality)
-        edge = process_image(edge.squeeze(0).numpy())
-
-        noise1 = torch.randn(dk_struct.shape)
-        noise2 = torch.randn(dk_struct.shape)
-        noise3 = torch.randn(dk_struct.shape)
-        noise4 = torch.randn(dk_struct.shape)
-
-        channels = []
-        if self.modality == 'brain.nii.gz':
-            channels.append(Modality)
-            channels.append(noise1)
-            channels.append(noise2)
-            channels.append(noise3)
-            channels.append(noise4)
-        elif self.modality == 'T2-brain.nii.gz':
-            channels.append(noise1)
-            channels.append(Modality)
-            channels.append(noise2)
-            channels.append(noise3)
-            channels.append(noise4)
-        elif self.modality in ['CT-brain.nii.gz', 'DWI-brain.nii.gz', 'Flair-brain.nii.gz']:
-            channels.append(noise1)
-            channels.append(noise2)
-            channels.append(Modality)
-            channels.append(noise3)
-            channels.append(noise4)
-        elif self.modality == 'PET':
-            channels.append(noise1)
-            channels.append(noise2)
-            channels.append(noise3)
-            channels.append(Modality)
-            channels.append(noise4)
-        elif self.modality in ['US-brain.nii.gz', 'PD-brain.nii.gz', 'SWI-brain.nii.gz', 'T2s-brain.nii.gz']:
-            channels.append(noise1)
-            channels.append(noise2)
-            channels.append(noise3)
-            channels.append(noise4)
-            channels.append(Modality)
-        channels.append(edge)
-
-        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0)
-
-        pattern = r'Modality: \[(.*?)\]'
-        match = re.search(pattern, caption)
-        modality_list = match.group(1).split(', ')
-        if self.modality == 'brain.nii.gz':
-            modality_list = ['T1w MRI' if i == 0 else 'None' for i in range(len(modality_list))]
-        elif self.modality == 'T2-brain.nii.gz':
-            modality_list = ['T2w MRI' if i == 1 else 'None' for i in range(len(modality_list))]
-        elif self.modality in ['CT-brain.nii.gz', 'DWI-brain.nii.gz', 'Flair-brain.nii.gz']:
-            modality_list = [f'{self.modality.split("-")[0]}' if i == 2 else 'None' for i in range(len(modality_list))]
-        elif self.modality == 'PET':
-            prefix = os.path.basename(next(os.path.join(patient_path, f"{prefix}-brain.nii.gz") for prefix in self.pet_prefixes if os.path.exists(os.path.join(patient_path, f"{prefix}-brain.nii.gz")))).split('-', 1)[0]
-            modality_list = [f'{prefix.split("-")[0]} PET' if i == 3 else 'None' for i in range(len(modality_list))]
-        elif self.modality in ['US-brain.nii.gz', 'PD-brain.nii.gz', 'SWI-brain.nii.gz', 'T2s-brain.nii.gz']:
-            modality_list = ['Random' if i == 4 else 'None' for i in range(len(modality_list))]
-        new_modality = f"Modality: [{', '.join(modality_list)}]"
-        caption = re.sub(pattern, new_modality, caption)
-        text = self.tokenizer(caption)[0]
-
-        item = {
-            'images': images,
-            'tissue': image_dict['tissue'],
-            'dk-struct': image_dict['dk_struct'],
-            'text': text,
-            'affine': affine,
-            'ID': patient_id
-        }
-
-        return item
-
-
-# Used for all modality combination inference
-class CombinationDataset(Dataset):
-    def __init__(self, texts_path, images_path):
-        self.data = pd.read_excel(texts_path, sheet_name='Sheet9')
-        self.data.set_index('patient_id', inplace=True)
-        self.images_path = images_path
-        self.images_list = []
-
-        for folder in os.listdir(images_path):
-            if folder not in self.data.index:
-                continue
-
-            patient_path = os.path.join(images_path, folder)
-            existing_mods = []
-
-            # T1w MRI
-            if os.path.exists(os.path.join(patient_path, 'brain.nii.gz')):
-                existing_mods.append((0, 'brain.nii.gz'))
-
-            # T2w MRI
-            if os.path.exists(os.path.join(patient_path, 'T2-brain.nii.gz')):
-                existing_mods.append((1, 'T2-brain.nii.gz'))
-
-            # CT/DWI/Flair
-            for mod in ['CT-brain.nii.gz', 'DWI-brain.nii.gz', 'Flair-brain.nii.gz']:
-                if os.path.exists(os.path.join(patient_path, mod)):
-                    existing_mods.append((2, mod))
-                    break
-
-            # PET
-            pet_prefixes = ["AV45", "FDG", "TAU", "Dynamic", "PIB", "CTAC", "Flumetamol", "NAV4694", "SUV", "SUM"]
-            for prefix in pet_prefixes:
-                mod_file = f"{prefix}-brain.nii.gz"
-                if os.path.exists(os.path.join(patient_path, mod_file)):
-                    existing_mods.append((3, mod_file))
-                    break
-
-            # Random
-            for mod in ['US-brain.nii.gz', 'PD-brain.nii.gz', 'SWI-brain.nii.gz', 'T2s-brain.nii.gz']:
-                if os.path.exists(os.path.join(patient_path, mod)):
-                    existing_mods.append((4, mod))
-                    break
-
-            for subset in self.all_non_empty_subsets(existing_mods):
-                mod_dict = {col: mod_file for (col, mod_file) in subset}
-                self.images_list.append((folder, mod_dict))
-
-        self.tokenizer, _ = load_text_encoder()
-
-    def all_non_empty_subsets(self, iterable):
-        s = list(iterable)
-        return chain.from_iterable(combinations(s, r) for r in range(1, len(s) + 1))
-
-    def __len__(self):
-        return len(self.images_list)
-
-    def __getitem__(self, idx):
-        patient_id, mod_dict = self.images_list[idx]
-        caption = self.data.loc[patient_id, 'caption']
-        patient_path = os.path.join(self.images_path, patient_id)
-
-        affine = nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).affine
-        dk_struct = process_label(nib.load(os.path.join(patient_path, "dk-struct.nii.gz")).get_fdata())
-        tissue = process_label(nib.load(os.path.join(patient_path, "tissue.nii.gz")).get_fdata())
-
-        channels = []
-        noises = [torch.randn(dk_struct.shape) for _ in range(5)]
-
-        for col in range(5):
-            if col in mod_dict:
-                mod_file = mod_dict[col]
-                modality = process_image(nib.load(os.path.join(patient_path, mod_file)).get_fdata())
-                channels.append(modality)
-            else:
-                channels.append(noises[col])
-
-        edge_modality = next((mod_dict[col] for col in sorted(mod_dict.keys()) if col in mod_dict), None)
-        edge = process_image(sobel_3d(process_image(nib.load(os.path.join(patient_path, edge_modality)).get_fdata())).squeeze(0).numpy())
-        channels.append(edge)
-
-        new_modality = ['None'] * 5
-        for col in mod_dict:
-            mod_file = mod_dict[col]
-            if col == 0:
-                new_modality[0] = 'T1w MRI'
-            elif col == 1:
-                new_modality[1] = 'T2w MRI'
-            elif col == 2:
-                new_modality[2] = mod_file.split('-')[0]  # CT/DWI/Flair
-            elif col == 3:
-                new_modality[3] = f"{mod_file.split('-')[0]} PET"
-            elif col == 4:
-                new_modality[4] = 'Random'
-
-        caption = re.sub(r'Modality: \[(.*?)\]',f"Modality: [{', '.join(new_modality)}]", caption)
-
         image_dict = {
             "T1": channels[0],
             "T2": channels[1],
@@ -535,19 +558,140 @@ class CombinationDataset(Dataset):
             "dk_struct": dk_struct
         }
 
-        components = []
-        for col in sorted(mod_dict.keys()):
-            mod_file = mod_dict[col]
-            id = mod_file.split('-', 1)[0]
-            components.append(f"C{col + 1}-{id}")
+        # Combine images into a tensor
+        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge", "tissue"]], dim=0)
 
-        return {
-            'images': torch.cat([image_dict[k] for k in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0),
-            'tissue': image_dict['tissue'],
+        text = self.tokenizer(caption)[0]
+        item = {
+            'images': images,
             'dk-struct': image_dict['dk_struct'],
-            'text': self.tokenizer(caption)[0],
+            'text': text,
             'affine': affine,
             'ID': patient_id,
-            'caption': caption,
-            'components': components
         }
+
+        return item
+
+
+# Used for mutilmodal lesion inference
+class LesionDataset(Dataset):
+    def __init__(self, texts_path, images_path, index='Sheet2'):
+        self.data = pd.read_excel(texts_path, sheet_name=index)
+        self.images_path = images_path
+        self.tokenizer, _ = load_text_encoder()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        caption = self.data.iloc[idx]['caption']
+        patient_id = self.data.iloc[idx]['patient_id']
+        patient_id = str(patient_id)
+        T1 = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "brain.nii.gz")).affine
+            T1 = nib.load(os.path.join(self.images_path, patient_id, "brain.nii.gz")).get_fdata()
+            T1 = process_image(T1)
+        T2 = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")).affine
+            T2 = nib.load(os.path.join(self.images_path, patient_id, "T2-brain.nii.gz")).get_fdata()
+            T2 = process_image(T2)
+        three = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")).affine
+            three = nib.load(os.path.join(self.images_path, patient_id, "CT-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "Flair-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "Flair-brain.nii.gz")).affine
+            three = nib.load(os.path.join(self.images_path, patient_id, "Flair-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "DWI-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "DWI-brain.nii.gz")).affine
+            three = nib.load(os.path.join(self.images_path, patient_id, "DWI-brain.nii.gz")).get_fdata()
+            three = process_image(three)
+        PET = None
+        pet_type = get_pet(caption.split(';')[2])
+        if pet_type is not None:
+            affine = nib.load(os.path.join(self.images_path, patient_id, pet_type + "-brain.nii.gz")).affine
+            PET = nib.load(os.path.join(self.images_path, patient_id, pet_type + "-brain.nii.gz")).get_fdata()
+            PET = process_image(PET)
+        Random = None
+        if os.path.exists(os.path.join(self.images_path, patient_id, "US-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "US-brain.nii.gz")).affine
+            Random = nib.load(os.path.join(self.images_path, patient_id, "US-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "PD-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "PD-brain.nii.gz")).affine
+            Random = nib.load(os.path.join(self.images_path, patient_id, "PD-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "SWI-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "WWI-brain.nii.gz")).affine
+            Random = nib.load(os.path.join(self.images_path, patient_id, "SWI-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        elif os.path.exists(os.path.join(self.images_path, patient_id, "T2s-brain.nii.gz")):
+            affine = nib.load(os.path.join(self.images_path, patient_id, "T2s-brain.nii.gz")).affine
+            Random = nib.load(os.path.join(self.images_path, patient_id, "T2s-brain.nii.gz")).get_fdata()
+            Random = process_image(Random)
+        # calculate edge map
+        if T1 is not None:
+            edge = sobel_3d(T1)
+        elif T2 is not None:
+            edge = sobel_3d(T2)
+        elif three is not None:
+            edge = sobel_3d(three)
+        elif PET is not None:
+            edge = sobel_3d(PET)
+        elif Random is not None:
+            edge = sobel_3d(Random)
+        edge = process_image(edge.squeeze(0).numpy())
+        # concat channels
+        channels = []
+        if T1 is not None:
+            channels.append(T1)
+        else:
+            noise = torch.randn((224, 256, 224))
+            channels.append(noise)
+        if T2 is not None:
+            channels.append(T2)
+        else:
+            noise = torch.randn((224, 256, 224))
+            channels.append(noise)
+        if three is not None:
+            channels.append(three)
+        else:
+            noise = torch.randn((224, 256, 224))
+            channels.append(noise)
+        if PET is not None:
+            channels.append(PET)
+        else:
+            noise = torch.randn((224, 256, 224))
+            channels.append(noise)
+        if Random is not None:
+            channels.append(Random)
+        else:
+            noise = torch.randn((224, 256, 224))
+            channels.append(noise)
+        channels.append(edge)
+
+        image_dict = {
+            "T1": channels[0],
+            "T2": channels[1],
+            "three": channels[2],
+            "PET": channels[3],
+            "Random": channels[4],
+            "edge": channels[5]
+        }
+
+        # Combine images into a tensor
+        images = torch.cat([image_dict[key] for key in ["T1", "T2", "three", "PET", "Random", "edge"]], dim=0)
+
+        text = self.tokenizer(caption)[0]
+        item = {
+            'images': images,
+            'text': text,
+            'affine': affine,
+            'ID': patient_id,
+        }
+
+        return item
