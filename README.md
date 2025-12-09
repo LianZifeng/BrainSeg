@@ -28,9 +28,31 @@ git clone https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abs
 ```bash
 pip install open_clip_torch==2.23.0 transformers==4.35.2 matplotlib
 ```
-**4. To invoke your local path of Biomedical, you need to make a little modification to the source code of open-clip.**
+**4. To invoke your local path of Biomedical, you need to make a little modification to the source code of open-clip. Please follow: https://github.com/mlfoundations/open_clip/issues/772#issuecomment-1884355134**
 
-**Please follow: https://github.com/mlfoundations/open_clip/issues/772#issuecomment-1884355134**
+**5. Finally modify the model configuration to enable the text encoder to output tokens. In /your/path/to/BiomedCLIP/open_clip_config.json, add the setting of output_tokens to the "text_cfg" dictionary**
+
+**Before:**
+```bash
+   ...
+   "context_length": 256
+}
+```
+**After:**
+```bash
+    ...
+    "context_length": 256,
+    "output_tokens": true
+}
+```
+**6. Now you can load the Biomedical model like this:**
+```bash
+model, preprocess = create_model_from_pretrained('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224',
+                         cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
+
+tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224', 
+                         cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
+```
 
 ***
 
