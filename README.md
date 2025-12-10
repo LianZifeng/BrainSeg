@@ -7,6 +7,11 @@ Official implementation code for BrainSeg. We proposes a novel AI-based tool for
   <img src="figures/overview.png" width="100%" alt="BrainSeg Framework">
 </div>
 
+## Results
+<div style="text-align: center">
+  <img src="figures/results.png" width="100%" alt="Results">
+</div>
+
 ***
 
 ***
