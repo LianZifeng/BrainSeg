@@ -129,7 +129,17 @@ Sample/
 ### 1. Tissue segmentation
 You can run tissue segmentation inference using the following command:
 ```bash
-python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode tissue --flag multi
+python inference.py \
+    --texts_path ./test.xlsx \
+    --images_path ./Sample \
+    --predir ./Sample \
+    --model_dir /your/path/for/BrainSeg_model \
+    --clip_dir /your/path/for/BCLIP \
+    --img_size 224 256 224 \
+    --in_channels 6 \
+    --out_channels 4 \
+    --mode tissue \
+    --flag multi
 ```
 *
     * `--texts_path`: Path to the Excel file (`.xlsx`) containing text prompts (Default: `./test.xlsx`)
@@ -150,13 +160,31 @@ python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 2
 ### 2. Brain Parcellation
 You can run brain parcellation inference using the following command:
 ```bash
-python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 7 --out_channels 107 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode dk
+python inference.py \
+    --texts_path ./test.xlsx \
+    --images_path ./Sample \
+    --predir ./Sample \
+    --model_dir /your/path/for/BrainSeg_model \
+    --clip_dir /your/path/for/BCLIP \
+    --img_size 224 256 224 \
+    --in_channels 7 \
+    --out_channels 107 \
+    --mode dk
 ```
 
 ### 3. Lesion labeling
 You can run lesion labeling inference using the following command:
 ```bash
-python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode lesion
+python inference.py \
+    --texts_path ./test.xlsx \
+    --images_path ./Sample \
+    --predir ./Sample \
+    --model_dir /your/path/for/BrainSeg_model \
+    --clip_dir /your/path/for/BCLIP \
+    --img_size 224 256 224 \
+    --in_channels 6 \
+    --out_channels 4 \
+    --mode lesion
 ```
 
 ***
