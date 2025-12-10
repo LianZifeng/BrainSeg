@@ -109,7 +109,7 @@ python train.py  # Please change the path in the code to the path of your own da
 ## Step 3: Inference using our pretrained model
 We provide a set of example samples covering **diverse age groups, multiple modalities, and lesion cases** in [Sample](./Sample). You can run inference directly on these samples using our pre-trained model. You can also test on your own data, provided it is structured as follows:
 ```bash
-test.xlxs                   # text metadata prompt
+test.xlsx                   # text metadata prompt
 Sample/
 ├── sub001/
 │   ├── brain.nii.gz        
