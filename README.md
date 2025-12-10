@@ -1,4 +1,4 @@
-# BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling
+# 🧠 BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling
 Official implementation code for BrainSeg. We propose a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, CT, PET, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: B-Syn, B-CLIP, and BrainSeg.
 
 ***
@@ -13,10 +13,23 @@ Official implementation code for BrainSeg. We propose a novel AI-based tool for 
 </div>
 
 ***
+# 🛠️ Installation
+To ensure a clean workspace and prevent dependency conflicts, we strongly recommend creating a new Conda environment before running the code.
+## 1. Create and Activate Environment
+```bash
+# Create a new conda environment named 'brainseg' with Python 3.9
+conda create -n brainseg python=3.9 -y
+
+# Activate the environment
+conda activate brainseg
+
+# Install the required libraries
+pip install -r requirements.txt
+```
 
 ***
 # Get started with B-Syn and B-CLIP
-## Step 1: Set up the environment for BiomedCLIP
+## ⚙️ Step 1: Set up the environment for BiomedCLIP
 Our B-CLIP fine-tunes BiomedCLIP text encoder based on LoRA, so you need to first configure the Biomedical environment: 
 
 **1. First clone the latest BiomedCLIP model (the commit version we used is 27005c2, and earlier versions may have compatibility issues)**
@@ -58,7 +71,7 @@ model, preprocess = create_model_from_pretrained('hf-hub:microsoft/BiomedCLIP-Pu
 tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224', 
                          cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
 ```
-## Step 2: Prepare your data to train B-CLIP
+## 📂 Step 2: Prepare your data to train B-CLIP
 You can organize your file directory as follows to train B-CLIP on your own data
 ```bash
 prompt.xlsx                     # excel for text metadata
@@ -86,21 +99,19 @@ lesion/
 ├── subject03
 └── ……
 ```
-## Step 3: Train B-CLIP
+## 🚀 Step 3: Train B-CLIP
 Now you can start training B-CLIP. You can choose to train from scratch or load our pre-trained model of B-CLIP for fine-tuning. You can download our pretrained B-CLIP model through the following link: [BCLIP](https://drive.google.com/file/d/1yXsnsFRHFc_uZ84JoWh8wF63WGZjDdNh/view?usp=drive_link)
 ```bash
 python /BCLIP/train.py  # Please change the path in the code to the path of your own data
 ```
 
 ***
-
-***
 # Get started with BrainSeg
-## Step 1: Data preprocessing
+## 📂 Step 1: Data preprocessing
 Before starting training, we recommend that you preprocess the data. We suggest you use the same preprocessing steps as us, including registering all images to the MNI space and performing skull stripping. Then crop the image to (224, 256, 224). 
 After preprocessing, your data directory should be structured to match the B-CLIP training format
 
-## Step 2: Train BrainSeg
+## 🚀 Step 2: Train BrainSeg
 Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1oHgnOyCLNxjO3tn2iKG54-cyIEsKkVNS/view?usp=drive_link) for tissue segmentation, [BrainSeg_parc](https://drive.google.com/file/d/13Vl_3yaOgaWhUhdkS2IekR-sQnV4oCrA/view?usp=drive_link) for brain parcellation and [BrainSeg_lesion](https://drive.google.com/file/d/1qnw8pV1c6n0_kwUJx9iQXCJvDboFmxce/view?usp=drive_link) for lesion labeling
 ```bash
 python train.py  # Please change the path in the code to the path of your own data
@@ -188,8 +199,7 @@ python inference.py \
 ```
 
 ***
-
-# Citation
+# 📖 Citation
 If you find this work useful in your research, please cite:
 > **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding, Han Zhang, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. (Under Review)**
 
