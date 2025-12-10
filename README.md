@@ -1,5 +1,5 @@
 # BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling
-Official implementation code for BrainSeg. We proposes a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, CT, PET, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: B-Syn, B-CLIP, and BrainSeg.
+Official implementation code for BrainSeg. We propose a novel AI-based tool for comprehensive brain imaging segmentation with generalizability across multiple modalities, including MRI, CT, PET, and ultrasound, as well as across the lifespan (from neonates to the elderly). This framework consists of three main components: B-Syn, B-CLIP, and BrainSeg.
 
 ***
 ## Model overview
@@ -58,7 +58,7 @@ model, preprocess = create_model_from_pretrained('hf-hub:microsoft/BiomedCLIP-Pu
 tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224', 
                          cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
 ```
-## Step 2: Preparation your data to train B-CLIP
+## Step 2: Prepare your data to train B-CLIP
 You can organize your file directory as follows to train B-CLIP on your own data
 ```bash
 prompt.xlsx                     # excel for text metadata
@@ -96,7 +96,7 @@ python /BCLIP/train.py  # Please change the path in the code to the path of your
 
 ***
 # Get started with BrainSeg
-## Step 1: Data prepocessing
+## Step 1: Data preprocessing
 Before starting training, we recommend that you preprocess the data. We suggest you use the same preprocessing steps as us, including registering all images to the MNI space and performing skull stripping. Then crop the image to (224, 256, 224). 
 After preprocessing, your data directory should be structured to match the B-CLIP training format
 
