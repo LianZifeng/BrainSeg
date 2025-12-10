@@ -124,25 +124,23 @@ Sample/
 ### 1. Tissue segmentation
 You can run tissue segmentation inference using the following command:
 ```bash
-python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode tissue --flag single --modality CT-brain.nii.gz
+python inference.py --texts_path ./test.xlsx --images_path ./Sample --img_size 224 256 224 --in_channels 6 --out_channels 4 --model_dir /your/path/for/BrainSeg_model --clip_dir /your/path/for/BCLIP --predir ./Sample --mode tissue --flag multi
 ```
-| Argument | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| **Data & Paths** | | | |
-| `--images_path` | `str` | `./Sample` | Path to the directory containing input images. |
-| `--predir` | `str` | `./Sample` | Directory where the inference results will be saved. |
-| `--texts_path` | `str` | `./test.xlsx` | Path to the Excel file containing text prompts or metadata. |
-| `--model_dir` | `str` | *(Required)* | Path to the pretrained **BrainSeg** model weights. |
-| `--clip_dir` | `str` | *(Required)* | Path to the pretrained **B-CLIP** model weights. |
-| **Model Config** | | | |
-| `--img_size` | `int` | `(224, 256, 224)` | Input image spatial dimensions (D, H, W). |
-| `--in_channels` | `int` | `6` | Number of input channels (modalities). |
-| `--out_channels` | `int` | `4` | Number of output classes (segmentation labels). |
-| `--device` | `str` | `cuda` | Computation device (`cuda` or `cpu`). |
-| **Task Settings** | | | |
-| `--mode` | `str` | `tissue` | Target task name (e.g., `tissue`, `dk`, `lesion`). |
-| `--flag` | `str` | `multi` | Modality configuration flag (e.g., `multi`, `single`). |
-| `--modality` | `str` | `CT-brain.nii.gz` | Specific input modality identifier. |
+*
+    * `--texts_path`: Path to the Excel file (`.xlsx`) containing text prompts (Default: `./test.xlsx`)
+    * `--images_path`: Directory path of the input images to be processed (Default: `./Sample`)
+    * `--img_size`: Input image size as a tuple `(D, H, W)` (Default: `224 256 224`)
+    * `--in_channels`: Number of input channels (Default: `6`)
+    * `--out_channels`: Number of output classes (Default: `4`)
+    * `--device`: Device to run the model on, e.g., `cuda` for GPU or `cpu` (Default: `cuda`)
+    * `--model_dir`: Path to the directory containing your pretrained **BrainSeg** model
+    * `--clip_dir`: Path to the directory containing your pretrained **B-CLIP** model
+    * `--predir`: Directory path where the output results will be saved (Default: `./Sample`)
+    * `--mode`: Specifies the prediction task (e.g., `tissue`, `dk` or `lesion`).
+    * `--flag`: Determines the input modality strategy (Default: `multi`)
+        * `multi`: Uses all modalities in the subject folder for fusion inference.
+        * `single`: Uses a single modality for inference. Must be used with `--modality`.
+    * `--modality`: Specifies the target modality filename when `--flag` is set to `single` (Default: `CT-brain.nii.gz`)
 
 ### 2. Brain Parcellation
 You can run brain parcellation inference using the following command:
