@@ -107,7 +107,7 @@ python train.py  # Please change the path in the code to the path of your own da
 ```
 
 ## Step 3: Inference using our pretrained model
-We provide a set of example samples covering **diverse age groups, multiple modalities, and lesion cases** and a default test.xlsx for the sample data in [Sample](./Sample). You can run inference directly on these samples using our pre-trained model. You can also test on your own data, provided it is structured as follows:
+We provide a set of example samples covering **diverse age groups, multiple modalities, and lesion cases** in [Sample](./Sample) and a default text metadata prompt for the sample data in [test.xlsx](./test.xlsx). You can run inference directly on these samples using our pre-trained model. You can also test on your own data, provided it is structured as follows:
 ```bash
 test.xlsx                   # text metadata prompt
 Sample/
