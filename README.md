@@ -67,7 +67,7 @@ lesion_parameter.xlsx           # excel for lesion parameter, used for lesion sy
 data/
 ├── subject001/
 │   ├── brain.nii.gz            # brain image
-│   ├── tissue.nii.hz           # tissue map GT
+│   ├── tissue.nii.gz           # tissue map GT
 │   ├── dk-struct.nii.gz        # roi map GT
 │   ├── T2-brain.nii.gz         # T2 modality image, if have
 │   ├── CT-brain.nii.gz         # CT modality image, if have
@@ -78,7 +78,7 @@ data/
 lesion/
 ├── subject01/
 │   ├── brain.nii.gz            # brain image
-│   ├── lesion.nii.hz           # lesion map GT
+│   ├── lesion.nii.gz           # lesion map GT
 │   ├── Flair-brain.nii.gz      # T2-FLAIR modality image, if have
 │   ├── T2-brain.nii.gz         # T2 modality image, if have
 │   ├── ……                      # other modality image, if have
@@ -113,13 +113,13 @@ test.xlxs                   # text metadata prompt
 Sample/
 ├── sub001/
 │   ├── brain.nii.gz        
-│   ├── tissue.nii.hz        
+│   ├── tissue.nii.gz        
 │   ├── dk-struct.nii.gz     
 │   ├── T2-brain.nii.gz            
 │   ├── ……                  # any other modalities, if have                       
 ├── sub002/
 │   ├── brain.nii.gz        
-│   ├── tissue.nii.hz        
+│   ├── tissue.nii.gz        
 │   ├── dk-struct.nii.gz       
 │   ├── CT-brain.nii.gz        
 │   ├── ……                  # any other modalities, if have
