@@ -206,7 +206,7 @@ class BrainSeg(nn.Module):
             res_block=True,
         )
 
-        self.decoder1Seg_tissue = UnetrUpBlock(
+        self.decoder1Seg = UnetrUpBlock(
             spatial_dims=spatial_dims,
             in_channels=feature_size,
             out_channels=feature_size,
@@ -216,7 +216,7 @@ class BrainSeg(nn.Module):
             res_block=True,
         )
 
-        self.outSeg_tissue = UnetOutBlock(spatial_dims=spatial_dims, in_channels=feature_size, out_channels=out_channel)
+        self.outSeg = UnetOutBlock(spatial_dims=spatial_dims, in_channels=feature_size, out_channels=out_channel)
 
         self.attention = Basic_block(dim=768, num_heads=16)
 
@@ -236,9 +236,9 @@ class BrainSeg(nn.Module):
         dec2Seg = self.decoder4Seg(dec3Seg, enc3)
         dec1Seg = self.decoder3Seg(dec2Seg, enc2)
         dec0Seg = self.decoder2Seg(dec1Seg, enc1)
-        outSegment_tissue = self.decoder1Seg_tissue(dec0Seg, enc0)
-        logitsSeg_tissue = self.outSeg_tissue(outSegment_tissue)
-        return logitsSeg_tissue
+        outSegment = self.decoder1Seg(dec0Seg, enc0)
+        logitsSeg = self.outSeg(outSegment_tissue)
+        return logitsSeg
 
 
 def window_partition(x, window_size):
@@ -798,4 +798,5 @@ class SwinTransformer(nn.Module):
         x3_out = self.proj_out(x3, normalize)
         x4 = self.layers4[0](x3.contiguous())
         x4_out = self.proj_out(x4, normalize)
+
         return [x0_out, x1_out, x2_out, x3_out, x4_out]
