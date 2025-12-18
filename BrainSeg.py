@@ -237,7 +237,7 @@ class BrainSeg(nn.Module):
         dec1Seg = self.decoder3Seg(dec2Seg, enc2)
         dec0Seg = self.decoder2Seg(dec1Seg, enc1)
         outSegment = self.decoder1Seg(dec0Seg, enc0)
-        logitsSeg = self.outSeg(outSegment_tissue)
+        logitsSeg = self.outSeg(outSegment)
         return logitsSeg
 
 
@@ -800,3 +800,4 @@ class SwinTransformer(nn.Module):
         x4_out = self.proj_out(x4, normalize)
 
         return [x0_out, x1_out, x2_out, x3_out, x4_out]
+
