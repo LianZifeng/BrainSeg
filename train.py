@@ -286,14 +286,14 @@ def trainer(config):
 if __name__ == '__main__':
     config.texts_path = '/your/path/to/texts_path.xlsx'
     config.images_path = '/your/path/to/BrainCLIP/images_path'
-    config.batch_size = 1
+    config.batch_size = 4
     config.img_size = (224, 256, 224)
     config.in_channels = 6
     config.out_channels = 4
     config.optim_lr = 1e-4
     config.reg_weight = 1e-5
-    config.warmup_epochs = 1
-    config.max_epochs = 32
+    config.warmup_epochs = 5
+    config.max_epochs = 50
     config.tag = '001'
     config.logdir = './SegCLIPro_logdir/' + config.tag
     config.load_pretrained = True
@@ -303,4 +303,5 @@ if __name__ == '__main__':
     config.device = 'cuda'
     config.valid_texts_path = '/your/path/to/valid_texts_path.xlsx'
     config.clip_path = '/your/path/to/BCLIP.pt'
+
     trainer(config)
