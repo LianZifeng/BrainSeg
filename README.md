@@ -28,7 +28,10 @@ pip install -r requirements.txt
 ```
 
 ***
-# Get started with B-Syn and B-CLIP
+# Get started with B-Syn
+
+***
+# Get started with B-CLIP
 ## ⚙️ Step 1: Set up the environment for BiomedCLIP
 Our B-CLIP fine-tunes BiomedCLIP text encoder based on LoRA, so you need to first configure the Biomedical environment: 
 
