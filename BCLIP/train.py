@@ -36,7 +36,7 @@ class AverageMeter(object):
         self.avg = np.where(self.count > 0, self.sum / self.count, self.sum)
 
 
-class ClipLoss(nn.Module):
+class CLIPLoss(nn.Module):
 
     def __init__(self, cache_labels=True):
         super().__init__()
@@ -142,7 +142,7 @@ def trainer(config):
     total_steps = (len(loader) // config.accum_freq) * config.epochs
     scheduler = cosine_lr(optimizer, config.lr, config.warmup, total_steps)
     # Loss
-    loss = ClipLoss()
+    loss = CLIPLoss()
     best_loss = float('inf')
     os.makedirs(config.logdir, exist_ok=True)
     writer = SummaryWriter(log_dir=config.logdir)
@@ -220,7 +220,7 @@ if __name__ == '__main__':
     config.parameter_path = r'/your/path/to/parameter_path.xlsx'
     config.lesion_path = r'/your/path/to/lesion_path'
     config.lesion_parameter_path = r'/your/path/to/lesion_parameter_path.xlsx'
-    config.batch_size = 128
+    config.batch_size = 64
     config.in_channels = 6
     config.device = 'cuda'
     config.lr = 0.0001
@@ -232,8 +232,9 @@ if __name__ == '__main__':
     config.beta2 = 0.999
     config.eps = 1e-08
     config.wd = 0.2
-    config.warmup = 1600
-    config.checkpoint = True
+    config.warmup = 1600 # 5-10 epochs
+    config.checkpoint = False
     config.logs = '/your/path/to/save/log'
     config.logdir = '/your/path/to/save/logdir' + config.tag
+
     trainer(config)
