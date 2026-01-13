@@ -29,6 +29,34 @@ pip install -r requirements.txt
 
 ***
 # Get started with B-Syn
+We provide a [demo](./BSyn/BSyn/BSyn_Demo.py) script for immediate testing and usage.
+
+## 🧪 Quick Start
+First, navigate to the B-Syn source directory:
+```bash
+cd ./BSyn/BSyn/
+```
+
+**1. Multimodal Synthesis**
+
+You can synthesize images for different modalities by specifying the target output filename. Please refer to our function arguments in the code for a full list of supported modality parameters. For example, to generate a T2-weighted MRI image:
+```bash
+python BSyn_Demo.py --modality T2-brain.nii.gz
+```
+
+**2. Lesion Synthesis**
+
+B-Syn supports the simulation of pathological features, such as tumors and strokes. You can control the pathology type using the --lesion_type argument.
+
+**Generate Tumor data**
+```bash
+python BSyn_Demo.py --modality Flair-brain.nii.gz --lesion_type tumor
+```
+
+**Generate Stroke data**
+```bash
+python BSyn_Demo.py --modality DWI-brain.nii.gz --lesion_type stroke
+```
 
 ***
 # Get started with B-CLIP
@@ -204,7 +232,7 @@ python inference.py \
 ***
 # 📖 Citation
 If you find this work useful in your research, please cite:
-> **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding, Han Zhang, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. (Under Review)**
+> **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding<sup>&ast;</sup>, Han Zhang<sup>&ast;</sup>, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. (Under Review)**
 
 # [<font color=#F8B48F size=3>License</font> ](./LICENSE)
 ```shell
