@@ -139,8 +139,7 @@ python /BCLIP/train.py  # Please change the path in the code to the path of your
 ***
 # Get started with BrainSeg
 ## 📂 Step 1: Data preprocessing
-Before starting training, you should preprocess your data following the same steps as ours, including registering all images to the MNI space, performing skull stripping, and cropping the images to (224, 256, 224). 
-After preprocessing, your data directory should be structured to match the B-CLIP training format
+Before starting training, you should preprocess your data following the same steps as ours, including performing bias field correction and skull stripping, registering all images to the MNI space, reorientation to a consistent RPI coordinate system, and cropping the images to (224, 256, 224). We provide a [preprocessing](./preprocessing.py) script to facilitate these steps. After preprocessing, your data directory should be structured to match the B-CLIP training format.
 
 ## 🚀 Step 2: Train BrainSeg
 Now you can start training BrainSeg. You can choose to train from scratch or load our pre-trained model of BrainSeg for fine-tuning. You can download our pretrained BrainSeg model through the following link: [BrainSeg_tissue](https://drive.google.com/file/d/1oHgnOyCLNxjO3tn2iKG54-cyIEsKkVNS/view?usp=drive_link) for tissue segmentation, [BrainSeg_parc](https://drive.google.com/file/d/13Vl_3yaOgaWhUhdkS2IekR-sQnV4oCrA/view?usp=drive_link) for brain parcellation and [BrainSeg_lesion](https://drive.google.com/file/d/1qnw8pV1c6n0_kwUJx9iQXCJvDboFmxce/view?usp=drive_link) for lesion labeling
