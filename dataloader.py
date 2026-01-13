@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 from torch.nn import functional as F
 from BCLIP.textencoder import load_text_encoder
-from monai.transforms import Compose, NormalizeIntensityd, RandSpatialCropd
+from monai.transforms import Compose, NormalizeIntensityd, RandScaleIntensityd, RandShiftIntensityd, RandFlipd, RandSpatialCropd
 import re
 import random
 from itertools import chain, combinations
@@ -15,7 +15,13 @@ def process_image(image):
     image = image[None, None, :, :, :]
     tensor_image = torch.tensor(image).float()
     image_dict = {"image": tensor_image}
-    transforms = Compose([NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True)])
+    transforms = Compose(
+        [
+            NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
+            # RandScaleIntensityd(keys="image", factors=0.1, prob=0.3),
+            # RandShiftIntensityd(keys="image", offsets=0.1, prob=0.3)
+        ]
+    )
     image_dict = transforms(image_dict)
     image = image_dict['image'].squeeze(0)
     return image
@@ -177,6 +183,12 @@ class SegDataset(Dataset):
         # transform = Compose([
         #     RandSpatialCropd(keys=["T1", "T2", "three", "PET", "Random", "edge", "tissue", "dk_struct"],
         #                      roi_size=patch_size, random_size=False)
+        # ])
+
+        # transform = Compose([
+        #     RandFlipd(keys=["T1", "T2", "three", "PET", "Random", "edge", "tissue", "dk_struct"], prob=0.3, spatial_axis=0),
+        #     RandFlipd(keys=["T1", "T2", "three", "PET", "Random", "edge", "tissue", "dk_struct"], prob=0.3, spatial_axis=1),
+        #     RandFlipd(keys=["T1", "T2", "three", "PET", "Random", "edge", "tissue", "dk_struct"], prob=0.3, spatial_axis=2),
         # ])
 
         # image_dict = {
