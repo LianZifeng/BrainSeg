@@ -224,24 +224,3 @@ class DiceFocalLoss3D(nn.Module):
             return total_loss
         else:
             raise ValueError(f'Unsupported reduction: {self.reduction}, available options are ["mean", "sum", "none"].')
-
-
-def compute_dice(pred, gt):
-    # Remove background class (assuming background is class 0)
-    pred = pred[:, 1:, :, :, :]
-    gt = gt[:, 1:, :, :, :]
-    num_classes = pred.size(1)
-    # Initialize dice score tensor of shape [b, C-1]
-    dice_scores = torch.zeros((pred.size(0), num_classes), device=pred.device)
-
-    for i in range(num_classes):
-        # Calculate intersection and union for each class (excluding background)
-        intersection = (pred[:, i] * gt[:, i]).sum(dim=[1, 2, 3])
-        pred_sum = pred[:, i].sum(dim=[1, 2, 3])
-        gt_sum = gt[:, i].sum(dim=[1, 2, 3])
-        union = pred_sum + gt_sum
-
-        # Calculate dice score with smoothing to avoid division by zero
-        dice_scores[:, i] = (2. * intersection + 1e-5) / (union + 1e-5)
-
-    return dice_scores
