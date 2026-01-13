@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 ***
 # Get started with B-Syn
-We provide a [demo](./BSyn/BSyn/BSyn_Demo.py) script for immediate testing and usage.
+We provide a [demo](./BSyn/BSyn/BSyn_Demo.py) script for immediate testing and usage of our B-Syn module.
 
 ## 🧪 Quick Start
 First, navigate to the B-Syn source directory:
