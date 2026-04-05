@@ -73,7 +73,7 @@ mkdir BiomedBERT-abstract
 cd ./BiomedBERT-abstract
 git clone https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract
 ```
-**3. If you encounter network issues when running `git clone`, we also provide the already downloaded folders for convenience through the following links: [BiomedCLIP (https://drive.google.com/drive/folders/1cWMRxmZE_a8KmciztBfyG5vLapdjPDXh?usp=sharing) and [BiomedBERT-abstract](https://drive.google.com/drive/folders/1OZXy5kvih6ESLo0LYq-bvudYcGRYCM82?usp=sharing).**
+**3. If you encounter network issues when running `git clone`, we also provide the already downloaded folders for convenience through the following links: [BiomedCLIP] (https://drive.google.com/drive/folders/1cWMRxmZE_a8KmciztBfyG5vLapdjPDXh?usp=sharing) and [BiomedBERT-abstract](https://drive.google.com/drive/folders/1OZXy5kvih6ESLo0LYq-bvudYcGRYCM82?usp=sharing).**
 
 **4. To invoke your local path of Biomedical, you need to make a little modification to the source code of open-clip. Please follow: https://github.com/mlfoundations/open_clip/issues/772#issuecomment-1884355134**
 
