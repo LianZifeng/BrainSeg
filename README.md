@@ -17,14 +17,12 @@ Official implementation code for BrainSeg. We propose a novel AI-based tool for 
 To ensure a clean workspace and prevent dependency conflicts, we strongly recommend creating a new Conda environment before running the code.
 ## 1. Create and Activate Environment
 ```bash
-# Create a new conda environment named 'brainseg' with Python 3.9
-conda create -n brainseg python=3.9 -y
+# Create a new conda environment named 'BrainSeg' with Python 3.9 and install the required libraries
+cd /your/path/to/this/repository
+conda env create -f environment.yml -n BrainSeg
 
 # Activate the environment
-conda activate brainseg
-
-# Install the required libraries
-pip install -r requirements.txt
+conda activate BrainSeg
 ```
 
 ***
