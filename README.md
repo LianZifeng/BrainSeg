@@ -63,12 +63,14 @@ Our B-CLIP fine-tunes BiomedCLIP text encoder based on LoRA, so you need to firs
 
 **1. First clone the latest BiomedCLIP model (the commit version we used is 27005c2, and earlier versions may have compatibility issues)**
 ```bash
-cd /your/path/to/BiomedCLIP
+mkdir BiomedCLIP
+cd ./BiomedCLIP
 git clone https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224
 ```
 **2. And then clone the latest BiomedBERT-abstract**
 ```bash
-cd /your/path/to/BiomedBERT-abstract
+mkdir BiomedBERT-abstract
+cd ./BiomedBERT-abstract
 git clone https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract
 ```
 **3. Install the specific version of open_clip_torch**
