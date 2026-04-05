@@ -94,11 +94,13 @@ git clone https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abs
 ```
 **6. Now you can load the Biomedical model like this:**
 ```bash
-model, preprocess = create_model_from_pretrained('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224',
-                         cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
-
-tokenizer = get_tokenizer('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224', 
-                         cache_dir='/your/path/to/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
+model, preprocess = open_clip.create_model_from_pretrained(
+    'hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224',
+    pretrained='/your/path/to/BiomedCLIP/open_clip_pytorch_model.bin',
+    cache_dir='/your/path/to/BiomedCLIP')
+tokenizer = open_clip.get_tokenizer(
+    model_name='hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224',
+    cache_dir='/your/path/to/BiomedCLIP')
 ```
 ## 📂 Step 2: Prepare your data to train B-CLIP
 You can organize your file directory as follows to train B-CLIP on your own data
