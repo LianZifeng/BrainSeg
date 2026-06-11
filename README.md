@@ -231,7 +231,7 @@ python inference.py \
 ***
 # 📖 Citation
 If you find this work useful in your research, please cite:
-> **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding<sup>&ast;</sup>, Han Zhang<sup>&ast;</sup>, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. (Under Review)**
+> **Shijie Huang<sup>†</sup>, Zifeng Lian<sup>†</sup>, Dengqiang Jia<sup>†</sup>, Kaicong Sun<sup>†</sup>, Xiaoye Li<sup>†</sup>, Jiameng Liu<sup>†</sup>, Yulin Wang, Caiwen Jiang, Fangmei Zhu, Zhongxiang Ding<sup>&ast;</sup>, Han Zhang<sup>&ast;</sup>, Geng Chen<sup>&ast;</sup>, Feng Shi<sup>&ast;</sup>, Dinggang Shen<sup>&ast;</sup>. BrainSeg: A Generalized Framework for Comprehensive Multimodal Brain Tissue Segmentation, Parcellation, and Lesion Labeling. npj Digital Medicine, 2026.**
 
 # [<font color=#F8B48F size=3>License</font> ](./LICENSE)
 ```shell
